@@ -5,9 +5,9 @@ import {
     StyleSheet,
     TextInput,
     TouchableOpacity,
-    ScrollView,
     Alert,
-    FlatList
+    FlatList,
+    Platform
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -18,18 +18,44 @@ import Medicament from '../components/Medicament'
 
 import moment from 'moment'
 import 'moment/locale/pt-br'
+import DateTimePicker from '@react-native-community/datetimepicker'
+
+const initialState = {
+    showMedicaments: true,
+    showAddMedicament: false,
+    medicaments: [],
+    visibleMedicaments: [],
+    date: new Date(),
+    showDatePicker: false
+}
 
 export default class NewRecipe extends Component {
     state = {
-        Medicaments: [{
-            id: Math.random(),
-            name: 'Dipirona',
-            dosage: '100mg de 8 em 8 horas durante 10 dias',
-            obs: 'Tomar apenas em caso de dor'
-        }],
+        ...initialState
+    }
 
-        showAddMedicament: false,
-        medicament: ''
+    getDatePicker = () => {
+        let datePicker = <DateTimePicker value={this.state.date}
+            onChange={(_, date) => this.setState({ date, showDatePicker: false })} 
+            mode='date' />
+
+        const dateString = moment(this.state.date).locale('pt-br').format('DD/MM/YYYY')
+
+        if(Platform.OS === 'android'){
+            datePicker = (
+                <View style={{ marginVertical: 15 }}>
+                    <Text style={styles.title}>Data de Vencimento</Text>
+                    <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
+                        <Text style={styles.date}>
+                            {dateString}
+                        </Text>
+                    </TouchableOpacity>
+                    {this.state.showDatePicker && datePicker}
+                </View>
+            )
+        }
+        
+        return datePicker
     }
 
     addMedicament = newMedicament => {
@@ -41,7 +67,7 @@ export default class NewRecipe extends Component {
             Alert.alert('Não foi possível adicionar!', 'Dosagem Inválida')
             return
         }
-        const medicaments = [ ...this.state.medicaments ]
+        const medicaments = [...this.state.medicaments]
         medicaments.push({
             id: Math.random(),
             name: newMedicament.name,
@@ -52,6 +78,17 @@ export default class NewRecipe extends Component {
         this.setState({ medicaments, showAddMedicament: false })
     }
 
+    showMedicaments = () => {
+        let visibleMedicaments = null
+        visibleMedicaments = [...this.state.medicaments]
+        this.setState({ visibleMedicaments })
+    }
+
+    deleteMedicament = id => {
+        const medicaments = this.state.medicaments.filter(medicament => medicament.id !== id)
+        this.setState({ medicaments }, this.showMedicaments)
+    }
+
     render() {
         const today = moment().locale('pt-br').format('DD/MM/YYYY')
         const hospital = "Hospital Regional de Patos de Minas" //BUSCAR NOME DO HOSPITAL NO DB
@@ -59,7 +96,7 @@ export default class NewRecipe extends Component {
             <View style={styles.container}>
                 <AddMedicament isVisible={this.state.showAddMedicament}
                     onCancel={() => this.setState({ showAddMedicament: false })}
-                    onSave={this.AddMedicament}
+                    onSave={this.addMedicament}
                 />
                 <View style={styles.header}>
                     <Text style={styles.title}>{today}</Text>
@@ -67,74 +104,75 @@ export default class NewRecipe extends Component {
                 </View>
 
                 <View style={styles.body}>
-                    <ScrollView>
-                        <Text style={styles.title}>Nome do Paciente</Text>
-                        <TextInput style={styles.input}
-                            placeholder="Ex: João da Silva"
-                        />
-                        <View style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            borderBottomWidth: 0.5,
-                            borderBottomColor: commonStyles.colors.primary
-                        }}>
-                            <View>
-                                <Text style={styles.title}>CPF</Text>
-                                <TextInput style={{
-                                    borderWidth: 1,
-                                    borderColor: commonStyles.colors.primary,
-                                    borderRadius: 10,
-                                    height: 38,
-                                    marginBottom: 7,
-                                    width: 150
-                                }}
-                                    placeholder="Ex: 66666666666"
-                                />
-                            </View>
-                            <View>
-                                <Text style={styles.title}>Cartão do SUS</Text>
-                                <TextInput style={{
-                                    borderWidth: 1,
-                                    borderColor: commonStyles.colors.primary,
-                                    borderRadius: 10,
-                                    height: 38,
-                                    marginBottom: 7,
-                                    width: 180
-                                }}
-                                    placeholder="Ex: 000000000000000"
-                                />
-                            </View>
-                        </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                            <View style={styles.addButton}>
-                                <TouchableOpacity style={styles.addIcon}
-                                    activeOpacity={0.8}
-                                    onPress={() => this.setState({ showAddMedicament: true })}
-                                >
-                                    <Icon name="plus" size={15}
-                                        color={commonStyles.colors.secondary}
-                                    />
-                                </TouchableOpacity>
-                                <TouchableOpacity style={{ marginLeft: 5 }}
-                                    activeOpacity={0.8}
-                                    onPress={() => this.setState({ showAddMedicament: true })}
-                                >
-                                    <Text style={{
-                                        fontWeight: 'bold',
-                                        color: commonStyles.colors.primary,
-                                        fontSize: 18.5
-                                    }}>Adicionar Medicamento</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View style={{ flexDirection: 'row' }}></View>
-                        <View style={styles.containerMed}>
-                            <FlatList data={this.state.medicaments}
-                                keyExtractor={item => `${item.id}`}
-                                renderItem={({ item }) => <Medicament {...item} />}
+                    <Text style={styles.title}>Nome do Paciente</Text>
+                    <TextInput style={styles.input}
+                        placeholder="Ex: João da Silva"
+                    />
+                    <View style={{
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        borderBottomWidth: 0.5,
+                        borderBottomColor: commonStyles.colors.primary
+                    }}>
+                        <View>
+                            <Text style={styles.title}>CPF</Text>
+                            <TextInput style={{
+                                borderWidth: 1,
+                                borderColor: commonStyles.colors.primary,
+                                borderRadius: 10,
+                                height: 38,
+                                marginBottom: 7,
+                                width: 150
+                            }}
+                                placeholder="Ex: 000.000.000-00"
                             />
                         </View>
-                    </ScrollView>
+                        <View>
+                            <Text style={styles.title}>Cartão do SUS</Text>
+                            <TextInput style={{
+                                borderWidth: 1,
+                                borderColor: commonStyles.colors.primary,
+                                borderRadius: 10,
+                                height: 38,
+                                marginBottom: 7,
+                                width: 180
+                            }}
+                                placeholder="Ex: 000000000000000"
+                            />
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                        <View style={styles.addButton}>
+                            <TouchableOpacity style={styles.addIcon}
+                                activeOpacity={0.8}
+                                onPress={() => this.setState({ showAddMedicament: true })}
+                            >
+                                <Icon name="plus" size={15}
+                                    color={commonStyles.colors.secondary}
+                                />
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ marginLeft: 5 }}
+                                activeOpacity={0.8}
+                                onPress={() => this.setState({ showAddMedicament: true })}
+                            >
+                                <Text style={{
+                                    fontWeight: 'bold',
+                                    color: commonStyles.colors.primary,
+                                    fontSize: 18.5
+                                }}>Adicionar Medicamento</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: 'row' }}></View>
+                    <View style={styles.containerMed}>
+                        <FlatList data={this.state.medicaments}
+                            keyExtractor={item => `${item.id}`}
+                            renderItem={({ item }) => <Medicament {...item} onDelete={this.deleteMedicament}/>}
+                        />
+                    </View>
+                    <View>
+                        {this.getDatePicker()}
+                    </View>
                 </View>
 
                 <View style={styles.footer}>
@@ -234,5 +272,16 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         borderRadius: 15,
         height: 290
+    },
+    date: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: commonStyles.colors.primaryDark,
+        borderWidth: 1,
+        borderRadius: 15,
+        marginVertical: 5,
+        width: 135,
+        borderColor: commonStyles.colors.primary,
+        padding: 10
     }
 })

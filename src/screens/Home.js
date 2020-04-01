@@ -4,7 +4,8 @@ import {
     Text,
     ImageBackground,
     StyleSheet,
-    TouchableOpacity
+    TouchableOpacity,
+    Image
 } from 'react-native'
 
 import commonStyles from '../commonStyles'

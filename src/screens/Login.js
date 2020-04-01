@@ -27,7 +27,7 @@ export default class Login extends Component {
                     style={styles.bgImg}>
                     <View style={styles.background}>
                         <TextInput
-                            placeholder="User"
+                            placeholder="Usuário"
                             style={styles.loginUS}
                             autoCorrect={false}
                         />
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
         borderRadius: 7
     },
     textBtn: {
-        color: '#FFF',
+        color: commonStyles.colors.secondary,
         fontSize: 18
     },
     lostPassword: {
@@ -87,6 +87,6 @@ const styles = StyleSheet.create({
 
     },
     lostBtn: {
-        color: '#FFF',
+        color: commonStyles.colors.secondary,
     }
 });
