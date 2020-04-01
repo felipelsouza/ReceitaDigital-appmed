@@ -45,7 +45,8 @@ export default class NewRecipe extends Component {
             datePicker = (
                 <View style={{ marginVertical: 15 }}>
                     <Text style={styles.title}>Data de Vencimento</Text>
-                    <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}>
+                    <TouchableOpacity onPress={() => this.setState({ showDatePicker: true })}
+                        activeOpacity={0.8}>
                         <Text style={styles.date}>
                             {dateString}
                         </Text>
@@ -280,8 +281,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 15,
         marginVertical: 5,
-        width: 135,
+        width: 128,
         borderColor: commonStyles.colors.primary,
-        padding: 10
+        padding: 8
     }
 })
