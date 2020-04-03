@@ -7,14 +7,18 @@ import {
     TouchableOpacity,
     Alert,
     FlatList,
-    Platform
+    Platform,
 } from 'react-native'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 import commonStyles from '../commonStyles'
 
+import { TextInputMask } from 'react-native-masked-text'
+
 import AddMedicament from './AddMedicament'
 import Medicament from '../components/Medicament'
+import ConfirmRecipe from './ConfirmRecipe'
+import Recipe from '../components/Recipe'
 
 import moment from 'moment'
 import 'moment/locale/pt-br'
@@ -23,10 +27,13 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 const initialState = {
     showMedicaments: true,
     showAddMedicament: false,
+    showConfirmRecipe: false,
     medicaments: [],
     visibleMedicaments: [],
     date: new Date(),
-    showDatePicker: false
+    showDatePicker: false,
+    recipe: [],
+    cpf: ''
 }
 
 export default class NewRecipe extends Component {
@@ -36,12 +43,12 @@ export default class NewRecipe extends Component {
 
     getDatePicker = () => {
         let datePicker = <DateTimePicker value={this.state.date}
-            onChange={(_, date) => this.setState({ date, showDatePicker: false })} 
+            onChange={(_, date) => this.setState({ date, showDatePicker: false })}
             mode='date' />
 
         const dateString = moment(this.state.date).locale('pt-br').format('DD/MM/YYYY')
 
-        if(Platform.OS === 'android'){
+        if (Platform.OS === 'android') {
             datePicker = (
                 <View style={{ marginVertical: 15 }}>
                     <Text style={styles.title}>Data de Vencimento</Text>
@@ -55,7 +62,7 @@ export default class NewRecipe extends Component {
                 </View>
             )
         }
-        
+
         return datePicker
     }
 
@@ -93,11 +100,15 @@ export default class NewRecipe extends Component {
     render() {
         const today = moment().locale('pt-br').format('DD/MM/YYYY')
         const hospital = "Hospital Regional de Patos de Minas" //BUSCAR NOME DO HOSPITAL NO DB
+
         return (
             <View style={styles.container}>
                 <AddMedicament isVisible={this.state.showAddMedicament}
                     onCancel={() => this.setState({ showAddMedicament: false })}
                     onSave={this.addMedicament}
+                />
+                <ConfirmRecipe isVisible={this.state.showConfirmRecipe}
+                    onCancel={() => this.setState({ showConfirmRecipe: false })}
                 />
                 <View style={styles.header}>
                     <Text style={styles.title}>{today}</Text>
@@ -117,14 +128,22 @@ export default class NewRecipe extends Component {
                     }}>
                         <View>
                             <Text style={styles.title}>CPF</Text>
-                            <TextInput style={{
-                                borderWidth: 1,
-                                borderColor: commonStyles.colors.primary,
-                                borderRadius: 10,
-                                height: 38,
-                                marginBottom: 7,
-                                width: 150
-                            }}
+                            <TextInputMask
+                                type={'cpf'}
+                                value={this.state.cpf}
+                                onChangeText={text => {
+                                    this.setState({
+                                        cpf: text
+                                    })
+                                }}
+                                style={{
+                                    borderWidth: 1,
+                                    borderColor: commonStyles.colors.primary,
+                                    borderRadius: 10,
+                                    height: 38,
+                                    marginBottom: 7,
+                                    width: 150
+                                }}
                                 placeholder="Ex: 000.000.000-00"
                             />
                         </View>
@@ -168,7 +187,7 @@ export default class NewRecipe extends Component {
                     <View style={styles.containerMed}>
                         <FlatList data={this.state.medicaments}
                             keyExtractor={item => `${item.id}`}
-                            renderItem={({ item }) => <Medicament {...item} onDelete={this.deleteMedicament}/>}
+                            renderItem={({ item }) => <Medicament {...item} onDelete={this.deleteMedicament} />}
                         />
                     </View>
                     <View>
@@ -183,7 +202,8 @@ export default class NewRecipe extends Component {
                             <Text style={styles.regularText}>Voltar</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.8}>
+                    <TouchableOpacity activeOpacity={0.8}
+                        onPress={() => this.setState({ showConfirmRecipe: true })}>
                         <View style={styles.buttons}>
                             <Text style={styles.regularText}>Emitir</Text>
                         </View>
@@ -218,7 +238,8 @@ const styles = StyleSheet.create({
         alignContent: 'flex-end',
         justifyContent: 'space-between',
         borderTopWidth: 1,
-        borderColor: commonStyles.colors.primaryDark
+        borderColor: commonStyles.colors.primaryDark,
+        backgroundColor: '#FFF'
     },
     body: {
         flex: 10,

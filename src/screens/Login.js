@@ -37,7 +37,7 @@ export default class Login extends Component {
                             autoCorrect={false}
                         />
                         <TouchableOpacity style={styles.pressButton}>
-                            <Text style={styles.textBtn}>Acess</Text>
+                            <Text style={styles.textBtn}>Acessar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.lostPassword}>
                             <Text style={styles.lostBtn}>Recuperar Senha</Text>
