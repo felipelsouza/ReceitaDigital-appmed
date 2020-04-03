@@ -150,14 +150,16 @@ export default class NewRecipe extends Component {
                         <View>
                             <Text style={styles.title}>Cartão do SUS</Text>
                             <TextInput style={{
-                                borderWidth: 1,
-                                borderColor: commonStyles.colors.primary,
-                                borderRadius: 10,
-                                height: 38,
-                                marginBottom: 7,
-                                width: 180
-                            }}
-                                placeholder="Ex: 000000000000000"
+                                    borderWidth: 1,
+                                    borderColor: commonStyles.colors.primary,
+                                    borderRadius: 10,
+                                    height: 38,
+                                    marginBottom: 7,
+                                    width: 180
+                                }}
+                                keyboardType='number-pad'
+                                maxLength={15}
+                                placeholder="Ex: 000.0000.0000.0000"
                             />
                         </View>
                     </View>
@@ -190,7 +192,7 @@ export default class NewRecipe extends Component {
                             renderItem={({ item }) => <Medicament {...item} onDelete={this.deleteMedicament} />}
                         />
                     </View>
-                    <View>
+                    <View style={{alignItems: 'center'}}>
                         {this.getDatePicker()}
                     </View>
                 </View>
