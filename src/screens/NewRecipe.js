@@ -18,7 +18,6 @@ import { TextInputMask } from 'react-native-masked-text'
 import AddMedicament from './AddMedicament'
 import Medicament from '../components/Medicament'
 import ConfirmRecipe from './ConfirmRecipe'
-import Recipe from '../components/Recipe'
 
 import moment from 'moment'
 import 'moment/locale/pt-br'
