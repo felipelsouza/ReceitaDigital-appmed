@@ -20,6 +20,7 @@
     "nodemon": "^2.0.3",
     "react": "16.9.0",
     "react-native": "^0.62.0",
+    "react-native-elements": "^1.2.7",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-masked-text": "^1.13.0",
     "react-native-text-input-mask": "^2.0.0",
