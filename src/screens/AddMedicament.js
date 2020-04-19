@@ -15,7 +15,7 @@ const initialState = { name: '', dosage: '', obs: '' }
 
 export default class AddMedicament extends Component {
     state = {
-        ...initialState
+        ...initialState,
     }
 
     save = () => {
