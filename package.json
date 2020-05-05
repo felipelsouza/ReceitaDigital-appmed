@@ -12,12 +12,14 @@
   "dependencies": {
     "@react-native-community/async-storage": "^1.8.1",
     "@react-native-community/datetimepicker": "^2.3.1",
+    "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "moment": "^2.24.0",
     "mysql": "^2.18.1",
     "mysqli": "^3.0.11",
     "nodemon": "^2.0.3",
+    "prop-types": "^15.7.2",
     "react": "16.9.0",
     "react-native": "^0.62.0",
     "react-native-elements": "^1.2.7",
@@ -25,7 +27,7 @@
     "react-native-masked-text": "^1.13.0",
     "react-native-text-input-mask": "^2.0.0",
     "react-native-vector-icons": "^6.6.0",
-    "react-navigation": "^4.3.2"
+    "react-navigation": "^4.3.9"
   },
   "devDependencies": {
     "@babel/core": "7.9.0",

@@ -19,6 +19,8 @@ import AddMedicament from './AddMedicament'
 import Medicament from '../components/Medicament'
 import ConfirmRecipe from './ConfirmRecipe'
 
+import api from '../services/api'
+
 import moment from 'moment'
 import 'moment/locale/pt-br'
 import DateTimePicker from '@react-native-community/datetimepicker'
@@ -32,6 +34,7 @@ const initialState = {
     date: new Date(),
     showDatePicker: false,
     recipe: [],
+    cartaoSus: '',
     cpf: ''
 }
 
@@ -130,11 +133,7 @@ export default class NewRecipe extends Component {
                             <TextInputMask
                                 type={'cpf'}
                                 value={this.state.cpf}
-                                onChangeText={text => {
-                                    this.setState({
-                                        cpf: text
-                                    })
-                                }}
+                                onChangeText={text => { this.setState({ cpf: text})}}
                                 style={{
                                     borderWidth: 1,
                                     borderColor: commonStyles.colors.primary,
@@ -159,6 +158,7 @@ export default class NewRecipe extends Component {
                                 keyboardType='number-pad'
                                 maxLength={15}
                                 placeholder="Ex: 000.0000.0000.0000"
+                                onChangeText={text => { this.setState({ cartaoSus: text})}}
                             />
                         </View>
                     </View>
