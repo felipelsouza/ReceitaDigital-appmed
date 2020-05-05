@@ -99,55 +99,83 @@ export default class NewRecipe extends Component {
         this.setState({ medicaments }, this.showMedicaments)
     }
 
-    render() {
-        const today = moment().locale('pt-br').format('DD/MM/YYYY')
-        const hospital = "Hospital Regional de Patos de Minas" //BUSCAR NOME DO HOSPITAL NO DB
+    handleConfirmPress = () => {
+        if (this.state.name === '' ||
+            this.state.cpf === '' ||
+            this.state.cartaoSus === '' ||
+            this.state.medicaments == '') {
+            Alert.alert('Não foi possível emitir a Receita', 'É necessário preencher todos os dados!')
+            return
+        }
+            /* } else {
+               try {
+                 const response = await api.post('/sessions', {
+                   email: this.state.email,
+                   password: this.state.password,
+                 });
+         
+                 const resetAction = StackActions.reset({
+                   index: 0,
+                   actions: [
+                     NavigationActions.navigate({ routeName: 'Main', params: { token: response.data.token } }),
+                   ],
+                 });
+                 this.props.navigation.dispatch(resetAction);
+               } catch (_err) {
+                 this.setState({ error: 'Houve um problema com o login, verifique suas credenciais!' });
+                }
+            }*/
+        }
 
-        return (
-            <View style={styles.container}>
-                <AddMedicament isVisible={this.state.showAddMedicament}
-                    onCancel={() => this.setState({ showAddMedicament: false })}
-                    onSave={this.addMedicament}
-                />
-                <ConfirmRecipe isVisible={this.state.showConfirmRecipe}
-                    onCancel={() => this.setState({ showConfirmRecipe: false })}
-                />
-                <View style={styles.header}>
-                    <Text style={styles.title}>{today}</Text>
-                    <Text style={styles.title}>{hospital}</Text>
-                </View>
+        render() {
+            const today = moment().locale('pt-br').format('DD/MM/YYYY')
+            const hospital = "Hospital Regional de Patos de Minas" //BUSCAR NOME DO HOSPITAL NO DB
 
-                <View style={styles.body}>
-                    <Text style={styles.title}>Nome do Paciente</Text>
-                    <TextInput style={styles.input}
-                        placeholder="Ex: João da Silva"
+            return (
+                <View style={styles.container}>
+                    <AddMedicament isVisible={this.state.showAddMedicament}
+                        onCancel={() => this.setState({ showAddMedicament: false })}
+                        onSave={this.addMedicament}
                     />
-                    <View style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        borderBottomWidth: 0.5,
-                        borderBottomColor: commonStyles.colors.primary
-                    }}>
-                        <View>
-                            <Text style={styles.title}>CPF</Text>
-                            <TextInputMask
-                                type={'cpf'}
-                                value={this.state.cpf}
-                                onChangeText={text => { this.setState({ cpf: text})}}
-                                style={{
-                                    borderWidth: 1,
-                                    borderColor: commonStyles.colors.primary,
-                                    borderRadius: 10,
-                                    height: 38,
-                                    marginBottom: 7,
-                                    width: 150
-                                }}
-                                placeholder="Ex: 000.000.000-00"
-                            />
-                        </View>
-                        <View>
-                            <Text style={styles.title}>Cartão do SUS</Text>
-                            <TextInput style={{
+                    <ConfirmRecipe isVisible={this.state.showConfirmRecipe}
+                        onCancel={() => this.setState({ showConfirmRecipe: false })}
+                    />
+                    <View style={styles.header}>
+                        <Text style={styles.title}>{today}</Text>
+                        <Text style={styles.title}>{hospital}</Text>
+                    </View>
+
+                    <View style={styles.body}>
+                        <Text style={styles.title}>Nome do Paciente</Text>
+                        <TextInput style={styles.input}
+                            placeholder="Ex: João da Silva"
+                        />
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            borderBottomWidth: 0.5,
+                            borderBottomColor: commonStyles.colors.primary
+                        }}>
+                            <View>
+                                <Text style={styles.title}>CPF</Text>
+                                <TextInputMask
+                                    type={'cpf'}
+                                    value={this.state.cpf}
+                                    onChangeText={text => { this.setState({ cpf: text }) }}
+                                    style={{
+                                        borderWidth: 1,
+                                        borderColor: commonStyles.colors.primary,
+                                        borderRadius: 10,
+                                        height: 38,
+                                        marginBottom: 7,
+                                        width: 150
+                                    }}
+                                    placeholder="Ex: 000.000.000-00"
+                                />
+                            </View>
+                            <View>
+                                <Text style={styles.title}>Cartão do SUS</Text>
+                                <TextInput style={{
                                     borderWidth: 1,
                                     borderColor: commonStyles.colors.primary,
                                     borderRadius: 10,
@@ -155,156 +183,158 @@ export default class NewRecipe extends Component {
                                     marginBottom: 7,
                                     width: 180
                                 }}
-                                keyboardType='number-pad'
-                                maxLength={15}
-                                placeholder="Ex: 000.0000.0000.0000"
-                                onChangeText={text => { this.setState({ cartaoSus: text})}}
+                                    keyboardType='number-pad'
+                                    maxLength={15}
+                                    placeholder="Ex: 000.0000.0000.0000"
+                                    onChangeText={text => { this.setState({ cartaoSus: text }) }}
+                                />
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                            <View style={styles.addButton}>
+                                <TouchableOpacity style={styles.addIcon}
+                                    activeOpacity={0.8}
+                                    onPress={() => this.setState({ showAddMedicament: true })}
+                                >
+                                    <Icon name="plus" size={15}
+                                        color={commonStyles.colors.secondary}
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ marginLeft: 5 }}
+                                    activeOpacity={0.8}
+                                    onPress={() => this.setState({ showAddMedicament: true })}
+                                >
+                                    <Text style={{
+                                        fontWeight: 'bold',
+                                        color: commonStyles.colors.primary,
+                                        fontSize: 18.5
+                                    }}>Adicionar Medicamento</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}></View>
+                        <View style={styles.containerMed}>
+                            <FlatList data={this.state.medicaments}
+                                keyExtractor={item => `${item.id}`}
+                                renderItem={({ item }) => <Medicament {...item} onDelete={this.deleteMedicament} />}
                             />
                         </View>
-                    </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                        <View style={styles.addButton}>
-                            <TouchableOpacity style={styles.addIcon}
-                                activeOpacity={0.8}
-                                onPress={() => this.setState({ showAddMedicament: true })}
-                            >
-                                <Icon name="plus" size={15}
-                                    color={commonStyles.colors.secondary}
-                                />
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{ marginLeft: 5 }}
-                                activeOpacity={0.8}
-                                onPress={() => this.setState({ showAddMedicament: true })}
-                            >
-                                <Text style={{
-                                    fontWeight: 'bold',
-                                    color: commonStyles.colors.primary,
-                                    fontSize: 18.5
-                                }}>Adicionar Medicamento</Text>
-                            </TouchableOpacity>
+                        <View style={{ alignItems: 'center' }}>
+                            {this.getDatePicker()}
                         </View>
                     </View>
-                    <View style={{ flexDirection: 'row' }}></View>
-                    <View style={styles.containerMed}>
-                        <FlatList data={this.state.medicaments}
-                            keyExtractor={item => `${item.id}`}
-                            renderItem={({ item }) => <Medicament {...item} onDelete={this.deleteMedicament} />}
-                        />
-                    </View>
-                    <View style={{alignItems: 'center'}}>
-                        {this.getDatePicker()}
+
+                    <View style={styles.footer}>
+                        <TouchableOpacity activeOpacity={0.8}
+                            onPress={() => this.props.navigation.navigate('Home')}>
+                            <View style={styles.buttons}>
+                                <Text style={styles.regularText}>Voltar</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity activeOpacity={0.8}
+                            onPress={this.handleConfirmPress}
+                            //onPress={() => this.setState({ showConfirmRecipe: true })}
+                            >
+                            <View style={styles.buttons}>
+                                <Text style={styles.regularText}>Emitir</Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
-
-                <View style={styles.footer}>
-                    <TouchableOpacity activeOpacity={0.8}
-                        onPress={() => this.props.navigation.navigate('Home')}>
-                        <View style={styles.buttons}>
-                            <Text style={styles.regularText}>Voltar</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.8}
-                        onPress={() => this.setState({ showConfirmRecipe: true })}>
-                        <View style={styles.buttons}>
-                            <Text style={styles.regularText}>Emitir</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        )
+            )
+        }
     }
-}
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1
-    },
-    header: {
-        flexDirection: 'row',
-        padding: 15,
-        borderBottomWidth: 1,
-        borderColor: commonStyles.colors.primaryDark,
-        justifyContent: 'space-between'
-    },
-    title: {
-        fontWeight: 'bold',
-        color: commonStyles.colors.primary,
-        fontSize: 15
-    },
-    footer: {
-        flex: 0.9,
-        paddingHorizontal: 40,
-        paddingTop: 12,
-        flexDirection: 'row',
-        alignContent: 'flex-end',
-        justifyContent: 'space-between',
-        borderTopWidth: 1,
-        borderColor: commonStyles.colors.primaryDark,
-        backgroundColor: '#FFF'
-    },
-    body: {
-        flex: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 20
-    },
-    buttons: {
-        flexDirection: 'row',
-        borderColor: commonStyles.colors.primaryDark,
-        borderWidth: 1.8,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: commonStyles.colors.primary,
-        height: 40,
-        width: 70,
-        borderRadius: 15
-    },
-    regularText: {
-        color: commonStyles.colors.secondary,
-        fontSize: 15
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: commonStyles.colors.primary,
-        borderRadius: 10,
-        height: 38,
-        marginBottom: 7
-    },
-    addIcon: {
-        flexDirection: 'row',
-        width: 24,
-        height: 24,
-        borderRadius: 12,
-        backgroundColor: commonStyles.colors.primaryDark,
-        justifyContent: 'center',
-        alignItems: 'center'
-    },
-    addButton: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginVertical: 10,
-        width: 250,
-        height: 30,
-        borderWidth: 1,
-        borderColor: commonStyles.colors.primary,
-        borderRadius: 20
-    },
-    containerMed: {
-        borderWidth: 0.5,
-        borderColor: commonStyles.colors.primary,
-        paddingHorizontal: 15,
-        borderRadius: 15,
-        height: 290
-    },
-    date: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: commonStyles.colors.primaryDark,
-        borderWidth: 1,
-        borderRadius: 15,
-        marginVertical: 5,
-        width: 128,
-        borderColor: commonStyles.colors.primary,
-        padding: 8
-    }
-})
+    const styles = StyleSheet.create({
+        container: {
+            flex: 1
+        },
+        header: {
+            flexDirection: 'row',
+            padding: 15,
+            borderBottomWidth: 1,
+            borderColor: commonStyles.colors.primaryDark,
+            justifyContent: 'space-between'
+        },
+        title: {
+            fontWeight: 'bold',
+            color: commonStyles.colors.primary,
+            fontSize: 15
+        },
+        footer: {
+            flex: 0.9,
+            paddingHorizontal: 40,
+            paddingTop: 12,
+            flexDirection: 'row',
+            alignContent: 'flex-end',
+            justifyContent: 'space-between',
+            borderTopWidth: 1,
+            borderColor: commonStyles.colors.primaryDark,
+            backgroundColor: '#FFF'
+        },
+        body: {
+            flex: 10,
+            paddingVertical: 10,
+            paddingHorizontal: 20
+        },
+        buttons: {
+            flexDirection: 'row',
+            borderColor: commonStyles.colors.primaryDark,
+            borderWidth: 1.8,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: commonStyles.colors.primary,
+            height: 40,
+            width: 70,
+            borderRadius: 15
+        },
+        regularText: {
+            color: commonStyles.colors.secondary,
+            fontSize: 15
+        },
+        input: {
+            borderWidth: 1,
+            borderColor: commonStyles.colors.primary,
+            borderRadius: 10,
+            height: 38,
+            marginBottom: 7
+        },
+        addIcon: {
+            flexDirection: 'row',
+            width: 24,
+            height: 24,
+            borderRadius: 12,
+            backgroundColor: commonStyles.colors.primaryDark,
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+        addButton: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginVertical: 10,
+            width: 250,
+            height: 30,
+            borderWidth: 1,
+            borderColor: commonStyles.colors.primary,
+            borderRadius: 20
+        },
+        containerMed: {
+            borderWidth: 0.5,
+            borderColor: commonStyles.colors.primary,
+            paddingHorizontal: 15,
+            borderRadius: 15,
+            height: 290
+        },
+        date: {
+            fontSize: 20,
+            fontWeight: 'bold',
+            color: commonStyles.colors.primaryDark,
+            borderWidth: 1,
+            borderRadius: 15,
+            marginVertical: 5,
+            width: 128,
+            borderColor: commonStyles.colors.primary,
+            padding: 8
+        }
+    })
