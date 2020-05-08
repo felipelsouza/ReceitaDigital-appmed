@@ -35,12 +35,13 @@ const initialState = {
     showDatePicker: false,
     recipe: [],
     cartaoSus: '',
-    cpf: ''
+    cpf: '',
+    name: ''
 }
 
 export default class NewRecipe extends Component {
     state = {
-        ...initialState
+        ...initialState,
     }
 
     getDatePicker = () => {
@@ -99,7 +100,7 @@ export default class NewRecipe extends Component {
         this.setState({ medicaments }, this.showMedicaments)
     }
 
-    handleConfirmPress = () => {
+    handleConfirmPress = async () => {
         if (this.state.name === '' ||
             this.state.cpf === '' ||
             this.state.cartaoSus === '' ||
@@ -108,28 +109,28 @@ export default class NewRecipe extends Component {
             return
         } else {
             try {
-                this.setState({ showConfirmRecipe: true })
-                /*const response = await api.post('/sessions', {
-                    email: this.state.email,
-                    password: this.state.password,
-                });
+                //this.setState({ showConfirmRecipe: true })
+                const cpfParsed = this.state.cpf.replace(/[^0-9]/g,"")
+                const response = await api.post('/receitas', {
+                    NOME_PACIENTE_RECEITA: this.state.name,
+                    CPF_PACIENTE_RECEITA: cpfParsed,
+                    CARTAO_SUS_PACIENTE: this.state.cartaoSus,
+                    MEDICAMENTO_RECEITA: this.state.medicaments.name,
+                    DOSAGEM: this.state.medicaments.dosage,
+                    DATA_RECEITA: this.state.date,
+                    OBS_RECEITA_PACIENTE: this.state.medicaments.obs
+                })
 
-                const resetAction = StackActions.reset({
-                    index: 0,
-                    actions: [
-                        NavigationActions.navigate({ routeName: 'Main', params: { token: response.data.token } }),
-                    ],
-                });
-                this.props.navigation.dispatch(resetAction);*/
-            } catch (_err) {
-                this.setState({ error: 'Houve um problema com o login, verifique suas credenciais!' });
+                Alert.alert('Receita enviada!')
+            } catch (e) {
+                Alert.alert('Erro ao enviar receita!', `${e}`)
             }
         }
     }
 
     render() {
         const today = moment().locale('pt-br').format('DD/MM/YYYY')
-        const hospital = "Hospital Regional de Patos de Minas" //BUSCAR NOME DO HOSPITAL NO DB
+        const hospital = "Receita Digital"
 
         return (
             <View style={styles.container}>
@@ -141,14 +142,16 @@ export default class NewRecipe extends Component {
                     onCancel={() => this.setState({ showConfirmRecipe: false })}
                 />
                 <View style={styles.header}>
-                    <Text style={styles.title}>{today}</Text>
                     <Text style={styles.title}>{hospital}</Text>
+                    <Text style={styles.title}>{today}</Text>
                 </View>
 
                 <View style={styles.body}>
                     <Text style={styles.title}>Nome do Paciente</Text>
                     <TextInput style={styles.input}
                         placeholder="Ex: João da Silva"
+                        value={this.state.name}
+                        onChangeText={text => { this.setState({ name: text }) }}
                     />
                     <View style={{
                         flexDirection: 'row',
