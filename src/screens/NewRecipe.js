@@ -78,6 +78,11 @@ export default class NewRecipe extends Component {
             Alert.alert('Não foi possível adicionar!', 'Dosagem Inválida')
             return
         }
+        if(!newMedicament.obs) {
+            Alert.alert('Não foi possível adicionar!', 'Observações inválidas! Caso não hajam observações, digite um espaço em branco.')
+            return
+        }
+
         const medicaments = [...this.state.medicaments]
         medicaments.push({
             id: Math.random(),
@@ -111,16 +116,24 @@ export default class NewRecipe extends Component {
             try {
                 //this.setState({ showConfirmRecipe: true })
                 const cpfParsed = this.state.cpf.replace(/[^0-9]/g, "")
+                
                 const arr = this.state.medicaments
-                const namesJSON = JSON.stringify(arr)
+                const names = arr.map(names => names.name)
+                const dosages = arr.map(dosages => dosages.dosage)
+                const observations = arr.map(observations => observations.obs)
+
+                const namesJSON = JSON.stringify(names)
+                const dosagesJSON = JSON.stringify(dosages)
+                const obsJSON = JSON.stringify(observations)
+               
                 const response = await api.post('/receitas', {
                     NOME_PACIENTE_RECEITA: this.state.name,
                     CPF_PACIENTE_RECEITA: cpfParsed,
                     CARTAO_SUS_PACIENTE: this.state.cartaoSus,
                     MEDICAMENTO_RECEITA: namesJSON,
-                    DOSAGEM: this.state.medicaments.dosage,
+                    DOSAGEM: dosagesJSON,
                     DATA_RECEITA: this.state.date,
-                    OBS_RECEITA_PACIENTE: this.state.medicaments.obs
+                    OBS_RECEITA_PACIENTE: obsJSON
                 })
 
                 Alert.alert('Receita enviada!')
