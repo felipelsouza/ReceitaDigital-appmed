@@ -41,7 +41,7 @@ const initialState = {
 
 export default class NewRecipe extends Component {
     state = {
-        ...initialState,
+        ...initialState
     }
 
     getDatePicker = () => {
@@ -110,12 +110,14 @@ export default class NewRecipe extends Component {
         } else {
             try {
                 //this.setState({ showConfirmRecipe: true })
-                const cpfParsed = this.state.cpf.replace(/[^0-9]/g,"")
+                const cpfParsed = this.state.cpf.replace(/[^0-9]/g, "")
+                const arr = this.state.medicaments
+                const namesJSON = JSON.stringify(arr)
                 const response = await api.post('/receitas', {
                     NOME_PACIENTE_RECEITA: this.state.name,
                     CPF_PACIENTE_RECEITA: cpfParsed,
                     CARTAO_SUS_PACIENTE: this.state.cartaoSus,
-                    MEDICAMENTO_RECEITA: this.state.medicaments.name,
+                    MEDICAMENTO_RECEITA: namesJSON,
                     DOSAGEM: this.state.medicaments.dosage,
                     DATA_RECEITA: this.state.date,
                     OBS_RECEITA_PACIENTE: this.state.medicaments.obs
@@ -178,18 +180,20 @@ export default class NewRecipe extends Component {
                         </View>
                         <View>
                             <Text style={styles.title}>Cartão do SUS</Text>
-                            <TextInput style={{
-                                borderWidth: 1,
-                                borderColor: commonStyles.colors.primary,
-                                borderRadius: 10,
-                                height: 38,
-                                marginBottom: 7,
-                                width: 180
-                            }}
+                            <TextInput
                                 keyboardType='number-pad'
                                 maxLength={15}
-                                placeholder="Ex: 000.0000.0000.0000"
+                                placeholder="Ex: 000000000000000"
+                                value={this.state.cartaoSus}
                                 onChangeText={text => { this.setState({ cartaoSus: text }) }}
+                                style={{
+                                    borderWidth: 1,
+                                    borderColor: commonStyles.colors.primary,
+                                    borderRadius: 10,
+                                    height: 38,
+                                    marginBottom: 7,
+                                    width: 180
+                                }}
                             />
                         </View>
                     </View>
