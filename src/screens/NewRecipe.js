@@ -106,13 +106,13 @@ export default class NewRecipe extends Component {
     }
 
     handleConfirmPress = async () => {
-        if (this.state.name === '' ||
+        /*if (this.state.name === '' ||
             this.state.cpf === '' ||
             this.state.cartaoSus === '' ||
             this.state.medicaments == '') {
             Alert.alert('Não foi possível emitir a Receita', 'É necessário preencher todos os dados!')
             return
-        } else {
+        } else {*/
             try {
                 //this.setState({ showConfirmRecipe: true })
                 const cpfParsed = this.state.cpf.replace(/[^0-9]/g, "")
@@ -140,12 +140,20 @@ export default class NewRecipe extends Component {
             } catch (e) {
                 Alert.alert('Erro ao enviar receita!', `${e}`)
             }
-        }
+        //}
     }
 
     render() {
         const today = moment().locale('pt-br').format('DD/MM/YYYY')
         const hospital = "Receita Digital"
+
+        const validations = []
+        validations.push(this.state.name && this.state.name.trim().length > 0)
+        validations.push(this.state.cpf && this.state.cpf.length === 14)
+        validations.push(this.state.cartaoSus && this.state.cartaoSus > 0)
+        validations.push(this.state.medicaments && this.state.medicaments != '')
+
+        const validForm = validations.reduce((t, a) => t && a)
 
         return (
             <View style={styles.container}>
@@ -253,9 +261,10 @@ export default class NewRecipe extends Component {
                     </TouchableOpacity>
                     <TouchableOpacity activeOpacity={0.8}
                         onPress={this.handleConfirmPress}
+                        disabled={!validForm}
                     //onPress={() => this.setState({ showConfirmRecipe: true })}
                     >
-                        <View style={styles.buttons}>
+                        <View style={[ styles.buttons, validForm ? {} : { backgroundColor: '#AAA' } ]}>
                             <Text style={styles.regularText}>Emitir</Text>
                         </View>
                     </TouchableOpacity>
