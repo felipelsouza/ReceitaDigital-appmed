@@ -78,7 +78,7 @@ export default class NewRecipe extends Component {
             Alert.alert('Não foi possível adicionar!', 'Dosagem Inválida')
             return
         }
-        if(!newMedicament.obs) {
+        if (!newMedicament.obs) {
             Alert.alert('Não foi possível adicionar!', 'Observações inválidas! Caso não hajam observações, digite um espaço em branco.')
             return
         }
@@ -106,41 +106,34 @@ export default class NewRecipe extends Component {
     }
 
     handleConfirmPress = async () => {
-        /*if (this.state.name === '' ||
-            this.state.cpf === '' ||
-            this.state.cartaoSus === '' ||
-            this.state.medicaments == '') {
-            Alert.alert('Não foi possível emitir a Receita', 'É necessário preencher todos os dados!')
-            return
-        } else {*/
-            try {
-                //this.setState({ showConfirmRecipe: true })
-                const cpfParsed = this.state.cpf.replace(/[^0-9]/g, "")
-                
-                const arr = this.state.medicaments
-                const names = arr.map(names => names.name)
-                const dosages = arr.map(dosages => dosages.dosage)
-                const observations = arr.map(observations => observations.obs)
+        try {
+            //this.setState({ showConfirmRecipe: true })
 
-                const namesJSON = JSON.stringify(names)
-                const dosagesJSON = JSON.stringify(dosages)
-                const obsJSON = JSON.stringify(observations)
-               
-                const response = await api.post('/receitas', {
-                    NOME_PACIENTE_RECEITA: this.state.name,
-                    CPF_PACIENTE_RECEITA: cpfParsed,
-                    CARTAO_SUS_PACIENTE: this.state.cartaoSus,
-                    MEDICAMENTO_RECEITA: namesJSON,
-                    DOSAGEM: dosagesJSON,
-                    DATA_RECEITA: this.state.date,
-                    OBS_RECEITA_PACIENTE: obsJSON
-                })
+            const cpfParsed = this.state.cpf.replace(/[^0-9]/g, "")
 
-                Alert.alert('Receita enviada!')
-            } catch (e) {
-                Alert.alert('Erro ao enviar receita!', `${e}`)
-            }
-        //}
+            const arr = this.state.medicaments
+            const names = arr.map(names => names.name)
+            const dosages = arr.map(dosages => dosages.dosage)
+            const observations = arr.map(observations => observations.obs)
+
+            const namesJSON = JSON.stringify(names)
+            const dosagesJSON = JSON.stringify(dosages)
+            const obsJSON = JSON.stringify(observations)
+
+            const response = await api.post('/receitas', {
+                NOME_PACIENTE_RECEITA: this.state.name,
+                CPF_PACIENTE_RECEITA: cpfParsed,
+                CARTAO_SUS_PACIENTE: this.state.cartaoSus,
+                MEDICAMENTO_RECEITA: namesJSON,
+                DOSAGEM: dosagesJSON,
+                DATA_RECEITA: this.state.date,
+                OBS_RECEITA_PACIENTE: obsJSON
+            })
+
+            Alert.alert('Receita enviada!')
+        } catch (e) {
+            Alert.alert('Erro ao enviar receita!', `${e}`)
+        }
     }
 
     render() {
@@ -264,7 +257,7 @@ export default class NewRecipe extends Component {
                         disabled={!validForm}
                     //onPress={() => this.setState({ showConfirmRecipe: true })}
                     >
-                        <View style={[ styles.buttons, validForm ? {} : { backgroundColor: '#AAA' } ]}>
+                        <View style={[styles.buttons, validForm ? {} : { backgroundColor: '#AAA' }]}>
                             <Text style={styles.regularText}>Emitir</Text>
                         </View>
                     </TouchableOpacity>
