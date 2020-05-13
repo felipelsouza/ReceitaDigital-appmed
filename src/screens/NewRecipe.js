@@ -78,11 +78,7 @@ export default class NewRecipe extends Component {
             Alert.alert('Não foi possível adicionar!', 'Dosagem Inválida')
             return
         }
-        if (!newMedicament.obs) {
-            Alert.alert('Não foi possível adicionar!', 'Observações inválidas! Caso não hajam observações, digite um espaço em branco.')
-            return
-        }
-
+        
         const medicaments = [...this.state.medicaments]
         medicaments.push({
             id: Math.random(),
