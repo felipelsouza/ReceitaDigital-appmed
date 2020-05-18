@@ -6,16 +6,34 @@ import {
     StyleSheet,
     TouchableWithoutFeedback,
     TouchableOpacity,
-    TextInput
+    TextInput,
+    ScrollView
 } from 'react-native'
 
 import commonStyles from '../commonStyles'
 
-const initialState = { name: '', dosage: '', obs: '' }
+import MedicamentsList from '../components/MedicamentsList'
+import api from '../services/api'
+
+const initialState = {
+    name: '',
+    dosage: '',
+    obs: '',
+    text: '',
+    suggestions: []
+}
 
 export default class AddMedicament extends Component {
     state = {
         ...initialState,
+        items: [
+            'Dipirona',
+            'Clororquina',
+            'Maconha da boa',
+            'Anador',
+            'Novalgina',
+            'Doril'
+        ]
     }
 
     save = () => {
@@ -27,6 +45,35 @@ export default class AddMedicament extends Component {
 
         this.props.onSave && this.props.onSave(newMedicament)
         this.setState({ ...initialState })
+    }
+
+    onTextChanged = (e) => {
+        const value = e
+        let suggestions = []
+        if(value.length > 0) {
+            const regex = new RegExp(`^${value}`, 'i')
+            suggestions = this.state.items.sort().filter(v => regex.test(v))
+        }
+        this.setState(() => ({ suggestions, name: value }))
+    }
+
+    suggestionsSelected (value) {
+        this.setState(() => ({
+            name: value,
+            suggestions: []
+        }))
+    }
+
+    renderSuggestions() {
+        const { suggestions } = this.state
+        if (suggestions.length === 0) {
+            return null
+        }
+        return (
+            <ScrollView>
+                {suggestions.map((item) => <Text key={item} onPress={() => this.suggestionsSelected(item)}>{item}</Text>)}
+            </ScrollView>
+        )
     }
 
     render() {
@@ -45,9 +92,10 @@ export default class AddMedicament extends Component {
                         <Text style={styles.title}>Medicamento</Text>
                         <TextInput style={styles.input}
                             placeholder='Ex: Dipirona'
-                            onChangeText={name => this.setState({ name })}
+                            onChangeText={(name) => this.onTextChanged(name)}
                             value={this.state.name}
                         />
+                        <View>{this.renderSuggestions()}</View>
                         <Text style={styles.title}>Dosagem</Text>
                         <TextInput style={styles.input}
                             placeholder='Ex: 300 mg de 8 em 8 horas por 3 dias'
