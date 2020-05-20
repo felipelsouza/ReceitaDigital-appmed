@@ -10,10 +10,9 @@ import {
     ScrollView
 } from 'react-native'
 
-import commonStyles from '../commonStyles'
-
-import MedicamentsList from '../components/MedicamentsList'
 import api from '../services/api'
+
+import commonStyles from '../commonStyles'
 
 const initialState = {
     name: '',
@@ -26,14 +25,18 @@ const initialState = {
 export default class AddMedicament extends Component {
     state = {
         ...initialState,
-        items: [
-            'Dipirona',
-            'Clororquina',
-            'Maconha da boa',
-            'Anador',
-            'Novalgina',
-            'Doril'
-        ]
+        items: null
+    }
+
+    async componentDidMount() {
+        await api.get('/medicamentos')
+            .then(res => this.setState({ items: res.data }))
+        const arr = this.state.items
+        var items = arr.map(function (prods) {
+            return prods.PRODUTO
+        })
+        console.log(items)
+        this.setState({items: items})
     }
 
     save = () => {
@@ -50,14 +53,14 @@ export default class AddMedicament extends Component {
     onTextChanged = (e) => {
         const value = e
         let suggestions = []
-        if(value.length > 0) {
+        if (value.length > 0) {
             const regex = new RegExp(`^${value}`, 'i')
             suggestions = this.state.items.sort().filter(v => regex.test(v))
         }
         this.setState(() => ({ suggestions, name: value }))
     }
 
-    suggestionsSelected (value) {
+    suggestionsSelected(value) {
         this.setState(() => ({
             name: value,
             suggestions: []
@@ -70,13 +73,14 @@ export default class AddMedicament extends Component {
             return null
         }
         return (
-            <ScrollView>
-                {suggestions.map((item) => <Text key={item} onPress={() => this.suggestionsSelected(item)}>{item}</Text>)}
+            <ScrollView style={styles.autoCompleteList}>
+                {suggestions.map((item) => <Text style={styles.suggestions} key={item} onPress={() => this.suggestionsSelected(item)}>{item}</Text>)}
             </ScrollView>
         )
     }
 
     render() {
+        console.log(this.state.items)
         return (
             <Modal transparent={true} visible={this.props.isVisible}
                 onRequestClose={this.props.onCancel}
@@ -90,7 +94,7 @@ export default class AddMedicament extends Component {
                     <Text style={styles.header}>Adicionar Medicamento</Text>
                     <View style={styles.body}>
                         <Text style={styles.title}>Medicamento</Text>
-                        <TextInput style={styles.input}
+                        <TextInput style={styles.inputAC}
                             placeholder='Ex: Dipirona'
                             onChangeText={(name) => this.onTextChanged(name)}
                             value={this.state.name}
@@ -151,7 +155,7 @@ const styles = StyleSheet.create({
     buttons: {
         flexDirection: 'row',
         justifyContent: 'flex-end',
-        marginTop: 12
+        marginTop: 20
     },
     button: {
         flexDirection: 'row',
@@ -170,7 +174,12 @@ const styles = StyleSheet.create({
         borderColor: commonStyles.colors.primary,
         borderRadius: 10,
         height: 38,
-        marginBottom: 10
+    },
+    inputAC: {
+        borderWidth: 1,
+        borderColor: commonStyles.colors.primary,
+        borderRadius: 10,
+        height: 38
     },
     regularText: {
         color: commonStyles.colors.secondary,
@@ -179,9 +188,26 @@ const styles = StyleSheet.create({
     title: {
         fontWeight: 'bold',
         color: commonStyles.colors.primary,
-        fontSize: 15
+        fontSize: 15,
+        marginTop: 10
     },
     body: {
         padding: 10
+    },
+    autoCompleteList: {
+        width: '96%',
+        marginHorizontal: '2%',
+        marginBottom: 3,
+        height: 123
+    },
+    suggestions: {
+        borderBottomWidth: 1,
+        borderLeftWidth: 1,
+        borderRightWidth: 1,
+        paddingHorizontal: 10,
+        paddingVertical: 2,
+        backgroundColor: '#f7fff7',
+        borderColor: commonStyles.colors.primaryDark,
+        fontSize: 14
     }
 })
