@@ -13,6 +13,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome'
 import commonStyles from '../commonStyles'
 
+import Loading from './Loading'
+
 import { TextInputMask } from 'react-native-masked-text'
 
 import AddMedicament from './AddMedicament'
@@ -33,10 +35,12 @@ const initialState = {
     visibleMedicaments: [],
     date: new Date(),
     showDatePicker: false,
-    recipe: [],
+    //recipe: [],
     cartaoSus: '',
     cpf: '',
-    name: ''
+    name: '',
+    cpfMed: '',
+    loading: false
 }
 
 export default class NewRecipe extends Component {
@@ -78,7 +82,7 @@ export default class NewRecipe extends Component {
             Alert.alert('Não foi possível adicionar!', 'Dosagem Inválida')
             return
         }
-        
+
         const medicaments = [...this.state.medicaments]
         medicaments.push({
             id: Math.random(),
@@ -103,9 +107,12 @@ export default class NewRecipe extends Component {
 
     handleConfirmPress = async () => {
         try {
+            this.setState({ loading: true })
+
             //this.setState({ showConfirmRecipe: true })
 
             const cpfParsed = this.state.cpf.replace(/[^0-9]/g, "")
+            //const cpfMedParsed = this.state.cpfMed.replace(/[^0-9]/g, "")
 
             const arr = this.state.medicaments
             const names = arr.map(names => names.name)
@@ -119,12 +126,15 @@ export default class NewRecipe extends Component {
             const response = await api.post('/receitas', {
                 NOME_PACIENTE_RECEITA: this.state.name,
                 CPF_PACIENTE_RECEITA: cpfParsed,
+                //CPF_MEDICO: cpfMedParsed,
                 CARTAO_SUS_PACIENTE: this.state.cartaoSus,
                 MEDICAMENTO_RECEITA: namesJSON,
                 DOSAGEM: dosagesJSON,
                 DATA_RECEITA: this.state.date,
                 OBS_RECEITA_PACIENTE: obsJSON
             })
+
+            this.setState({ ...initialState })
 
             Alert.alert('Receita enviada!')
         } catch (e) {
@@ -133,133 +143,149 @@ export default class NewRecipe extends Component {
     }
 
     render() {
-        const today = moment().locale('pt-br').format('DD/MM/YYYY')
-        const hospital = "Receita Digital"
+        if (!this.state.loading) {
+            const today = moment().locale('pt-br').format('DD/MM/YYYY')
+            const hospital = "Receita Digital"
 
-        const validations = []
-        validations.push(this.state.name && this.state.name.trim().length > 0)
-        validations.push(this.state.cpf && this.state.cpf.length === 14)
-        validations.push(this.state.cartaoSus && this.state.cartaoSus > 0)
-        validations.push(this.state.medicaments && this.state.medicaments != '')
+            const validations = []
+            validations.push(this.state.name && this.state.name.trim().length > 0)
+            validations.push(this.state.cpf && this.state.cpf.length === 14)
+            validations.push(this.state.cartaoSus && this.state.cartaoSus > 0)
+            validations.push(this.state.medicaments && this.state.medicaments != '')
 
-        const validForm = validations.reduce((t, a) => t && a)
+            const validForm = validations.reduce((t, a) => t && a)
 
-        return (
-            <View style={styles.container}>
-                <AddMedicament isVisible={this.state.showAddMedicament}
-                    onCancel={() => this.setState({ showAddMedicament: false })}
-                    onSave={this.addMedicament}
-                />
-                <ConfirmRecipe isVisible={this.state.showConfirmRecipe}
-                    onCancel={() => this.setState({ showConfirmRecipe: false })}
-                />
-                <View style={styles.header}>
-                    <Text style={styles.title}>{hospital}</Text>
-                    <Text style={styles.title}>{today}</Text>
-                </View>
-
-                <View style={styles.body}>
-                    <Text style={styles.title}>Nome do Paciente</Text>
-                    <TextInput style={styles.input}
-                        placeholder="Ex: João da Silva"
-                        value={this.state.name}
-                        onChangeText={text => { this.setState({ name: text }) }}
+            return (
+                <View style={styles.container}>
+                    <AddMedicament isVisible={this.state.showAddMedicament}
+                        onCancel={() => this.setState({ showAddMedicament: false })}
+                        onSave={this.addMedicament}
                     />
-                    <View style={{
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        borderBottomWidth: 0.5,
-                        borderBottomColor: commonStyles.colors.primary
-                    }}>
-                        <View>
-                            <Text style={styles.title}>CPF</Text>
-                            <TextInputMask
-                                type={'cpf'}
-                                value={this.state.cpf}
-                                onChangeText={text => { this.setState({ cpf: text }) }}
-                                style={{
-                                    borderWidth: 1,
-                                    borderColor: commonStyles.colors.primary,
-                                    borderRadius: 10,
-                                    height: 38,
-                                    marginBottom: 7,
-                                    width: 150
-                                }}
-                                placeholder="Ex: 000.000.000-00"
-                            />
-                        </View>
-                        <View>
-                            <Text style={styles.title}>Cartão do SUS</Text>
-                            <TextInput
-                                keyboardType='number-pad'
-                                maxLength={15}
-                                placeholder="Ex: 000000000000000"
-                                value={this.state.cartaoSus}
-                                onChangeText={text => { this.setState({ cartaoSus: text }) }}
-                                style={{
-                                    borderWidth: 1,
-                                    borderColor: commonStyles.colors.primary,
-                                    borderRadius: 10,
-                                    height: 38,
-                                    marginBottom: 7,
-                                    width: 180
-                                }}
-                            />
-                        </View>
+                    <ConfirmRecipe isVisible={this.state.showConfirmRecipe}
+                        onCancel={() => this.setState({ showConfirmRecipe: false })}
+                    />
+                    <View style={styles.header}>
+                        <Text style={styles.title}>{hospital}</Text>
+                        <Text style={styles.title}>{today}</Text>
                     </View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
-                        <View style={styles.addButton}>
-                            <TouchableOpacity style={styles.addIcon}
-                                activeOpacity={0.8}
-                                onPress={() => this.setState({ showAddMedicament: true })}
-                            >
-                                <Icon name="plus" size={15}
-                                    color={commonStyles.colors.secondary}
-                                />
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{ marginLeft: 5 }}
-                                activeOpacity={0.8}
-                                onPress={() => this.setState({ showAddMedicament: true })}
-                            >
-                                <Text style={{
-                                    fontWeight: 'bold',
-                                    color: commonStyles.colors.primary,
-                                    fontSize: 18.5
-                                }}>Adicionar Medicamento</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: 'row' }}></View>
-                    <View style={styles.containerMed}>
-                        <FlatList data={this.state.medicaments}
-                            keyExtractor={item => `${item.id}`}
-                            renderItem={({ item }) => <Medicament {...item} onDelete={this.deleteMedicament} />}
+                    <View style={styles.body}>
+                        <Text style={styles.title}>Nome do Paciente</Text>
+                        <TextInput style={styles.input}
+                            placeholder="Ex: João da Silva"
+                            value={this.state.name}
+                            onChangeText={text => { this.setState({ name: text }) }}
                         />
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            borderBottomWidth: 0.5,
+                            borderBottomColor: commonStyles.colors.primary
+                        }}>
+                            <View>
+                                <Text style={styles.title}>CPF</Text>
+                                <TextInputMask
+                                    type={'cpf'}
+                                    value={this.state.cpf}
+                                    onChangeText={text => { this.setState({ cpf: text }) }}
+                                    style={{
+                                        borderWidth: 1,
+                                        borderColor: commonStyles.colors.primary,
+                                        borderRadius: 10,
+                                        height: 38,
+                                        marginBottom: 7,
+                                        width: 150
+                                    }}
+                                    placeholder="Ex: 000.000.000-00"
+                                />
+                            </View>
+                            <View>
+                                <Text style={styles.title}>Cartão do SUS</Text>
+                                <TextInput
+                                    keyboardType='number-pad'
+                                    maxLength={15}
+                                    placeholder="Ex: 000000000000000"
+                                    value={this.state.cartaoSus}
+                                    onChangeText={text => { this.setState({ cartaoSus: text }) }}
+                                    style={{
+                                        borderWidth: 1,
+                                        borderColor: commonStyles.colors.primary,
+                                        borderRadius: 10,
+                                        height: 38,
+                                        marginBottom: 7,
+                                        width: 180
+                                    }}
+                                />
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                            <View style={styles.addButton}>
+                                <TouchableOpacity style={styles.addIcon}
+                                    activeOpacity={0.8}
+                                    onPress={() => this.setState({ showAddMedicament: true })}
+                                >
+                                    <Icon name="plus" size={15}
+                                        color={commonStyles.colors.secondary}
+                                    />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ marginLeft: 5 }}
+                                    activeOpacity={0.8}
+                                    onPress={() => this.setState({ showAddMedicament: true })}
+                                >
+                                    <Text style={{
+                                        fontWeight: 'bold',
+                                        color: commonStyles.colors.primary,
+                                        fontSize: 18.5
+                                    }}>Adicionar Medicamento</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row' }}></View>
+                        <View style={styles.containerMed}>
+                            <FlatList data={this.state.medicaments}
+                                keyExtractor={item => `${item.id}`}
+                                renderItem={({ item }) => <Medicament {...item} onDelete={this.deleteMedicament} />}
+                            />
+                        </View>
+                        <View style={{ alignItems: 'center' }}>
+                            {this.getDatePicker()}
+                        </View>
                     </View>
-                    <View style={{ alignItems: 'center' }}>
-                        {this.getDatePicker()}
-                    </View>
-                </View>
 
-                <View style={styles.footer}>
-                    <TouchableOpacity activeOpacity={0.8}
-                        onPress={() => this.props.navigation.navigate('Home')}>
-                        <View style={styles.buttons}>
-                            <Text style={styles.regularText}>Voltar</Text>
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.8}
-                        onPress={this.handleConfirmPress}
-                        disabled={!validForm}
-                    //onPress={() => this.setState({ showConfirmRecipe: true })}
-                    >
-                        <View style={[styles.buttons, validForm ? {} : { backgroundColor: '#AAA' }]}>
-                            <Text style={styles.regularText}>Emitir</Text>
-                        </View>
-                    </TouchableOpacity>
+                    <View style={styles.footer}>
+                        <TouchableOpacity activeOpacity={0.8}
+                            onPress={() => this.props.navigation.navigate('Home')}>
+                            <View style={styles.buttons}>
+                                <Text style={styles.regularText}>Voltar</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity activeOpacity={0.8}
+                            onPress={this.handleConfirmPress}
+                            disabled={!validForm}
+                        //onPress={() => this.setState({ showConfirmRecipe: true })}
+                        >
+                            <View style={[styles.buttons, validForm ? {} : { backgroundColor: '#AAA' }]}>
+                                <Text style={styles.regularText}>Emitir</Text>
+                            </View>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
-        )
+            )
+        } else {
+            return (
+                <View style={styles.container}>
+                    <View style={{ alignItems: 'center' }}>
+                        <Text style={{
+                            fontSize: 24,
+                            color: commonStyles.colors.primaryDark,
+                            fontWeight: 'bold',
+                            paddingTop: '70%',
+                            paddingBottom: 30
+                        }}>Enviando Receita...</Text>
+                        <Loading />
+                    </View>
+                </View>
+            )
+        }
     }
 }
 
@@ -282,7 +308,7 @@ const styles = StyleSheet.create({
     footer: {
         flex: 0.9,
         paddingHorizontal: 40,
-        paddingTop: 12,
+        padding: 12,
         flexDirection: 'row',
         alignContent: 'flex-end',
         justifyContent: 'space-between',

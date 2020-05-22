@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, FlatList } from 'react-native'
 import { SearchBar } from 'react-native-elements'
 import commonStyles from '../commonStyles'
+
 export default class SeekRecipe extends Component {    
     state = {
         search: '',

@@ -74,7 +74,7 @@ export default class AddMedicament extends Component {
         }
         return (
             <ScrollView style={styles.autoCompleteList}>
-                {suggestions.map((item) => <Text style={styles.suggestions} key={item} onPress={() => this.suggestionsSelected(item)}>{item}</Text>)}
+                {suggestions.map((item) => <Text style={styles.suggestions} key={Math.random()} onPress={() => this.suggestionsSelected(item)}>{item}</Text>)}
             </ScrollView>
         )
     }
