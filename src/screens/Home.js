@@ -18,14 +18,13 @@ import 'moment/locale/pt-br'
 export default class Home extends Component {
     render() {
         const today = moment().locale('pt-br').format('dddd, D [de] MMMM')
-        const doctor = "Felipe" //BUSCAR NOME DO MÉDICO DB
         return (
             <View style={styles.container}>
                 <ImageBackground source={bg}
                     style={styles.backgroud}>
                     <View style={styles.titleBar}>
                         <Text style={styles.subtitle}>{today}</Text>
-                        <Text style={styles.title}>Bem-vindo, Dr(a) {doctor}!</Text>
+                        <Text style={styles.title}>Bem-vindo, Dr(a)!</Text>
                     </View>
                 </ImageBackground>
 
@@ -68,7 +67,7 @@ const styles = StyleSheet.create({
         flex: 1
     },
     backgroud: {
-        flex: 3
+        flex: 4
     },
     home: {
         flex: 7,
@@ -98,7 +97,7 @@ const styles = StyleSheet.create({
     footer: {
         flex: 0.9,
         paddingHorizontal: 60,
-        padding: 15,
+        padding: 12,
         flexDirection: 'row',
         alignContent: 'flex-end',
         justifyContent: 'space-between',

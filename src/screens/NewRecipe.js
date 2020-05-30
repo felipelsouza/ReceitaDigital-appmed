@@ -265,7 +265,7 @@ export default class NewRecipe extends Component {
                         //onPress={() => this.setState({ showConfirmRecipe: true })}
                         >
                             <View style={[styles.buttons, validForm ? {} : { backgroundColor: '#AAA' }]}>
-                                <Text style={styles.regularText}>Emitir</Text>
+                                <Text style={{color: commonStyles.colors.secondary, fontSize: 18, fontWeight: 'bold'}}>Emitir</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -308,11 +308,10 @@ const styles = StyleSheet.create({
     },
     footer: {
         flex: 0.9,
-        paddingHorizontal: 40,
-        padding: 12,
+        paddingVertical: 12,
+        paddingHorizontal: 60,
         flexDirection: 'row',
-        alignContent: 'flex-end',
-        justifyContent: 'space-between',
+        justifyContent: 'center',
         borderTopWidth: 1,
         borderColor: commonStyles.colors.primaryDark,
         backgroundColor: '#FFF'
@@ -330,7 +329,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         backgroundColor: commonStyles.colors.primary,
         height: 40,
-        width: 70,
+        width: '100%',
         borderRadius: 15
     },
     regularText: {
