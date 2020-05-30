@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 
 import api from '../services/api'
-
+import Icon from 'react-native-vector-icons/FontAwesome'
 import commonStyles from '../commonStyles'
 
 const initialState = {

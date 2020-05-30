@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 
 import commonStyles from '../commonStyles'
+import Icon from 'react-native-vector-icons/FontAwesome'
 import bg from '../../assets/imgs/med-bg.jpg'
 
 import moment from 'moment'
@@ -41,12 +42,22 @@ export default class Home extends Component {
                             <Text style={styles.regularText}>Consultar Receitas</Text>
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity activeOpacity={0.8}>
-                        <View style={styles.buttons}>
-                            <Text style={styles.regularText}>Sair</Text>
-                        </View>
-                    </TouchableOpacity>
                 </View>
+                    <View style={styles.footer}>
+                        
+                    <TouchableOpacity style={styles.addIcon} activeOpacity={0.8}
+                            onPress={() => this.props.navigation.navigate('Perfil')}>
+                            <Icon name="user" size={20}
+                                    color={commonStyles.colors.secondary}
+                                />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.addIcon} activeOpacity={0.8}
+                            onPress={() => this.props.navigation.navigate('Login')}>
+                            <Icon name="sign-out" size={20}
+                                    color={commonStyles.colors.secondary}
+                                />
+                    </TouchableOpacity>
+                    </View>
             </View>
         )
     }
@@ -75,12 +86,35 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         fontWeight: "bold"
     },
+    regularText: {
+        color: commonStyles.colors.secondary,
+        fontSize: 15
+    },
     subtitle: {
         fontSize: 24,
         color: commonStyles.colors.secondary,
         marginLeft: 20,
     },
-
+    footer: {
+        flex: 0.9,
+        paddingHorizontal: 60,
+        padding: 15,
+        flexDirection: 'row',
+        alignContent: 'flex-end',
+        justifyContent: 'space-between',
+        borderTopWidth: 1,
+        borderColor: commonStyles.colors.primaryDark,
+        backgroundColor: '#FFF'
+    },
+    addIcon: {
+        flexDirection: 'row',
+        width: 35,
+        height: 35,
+        borderRadius: 12,
+        backgroundColor: commonStyles.colors.primaryDark,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
     buttons: {
         flexDirection: 'row',
         borderColor: commonStyles.colors.primaryDark,

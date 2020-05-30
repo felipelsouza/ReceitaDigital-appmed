@@ -25,7 +25,7 @@ const mainRoutes = {
 }
 
 const mainNavigator = createSwitchNavigator(mainRoutes, {
-    initialRouteName: 'NewRecipe'
+    initialRouteName: 'Login'
 })
 
 export default createAppContainer(mainNavigator, mainRoutes)

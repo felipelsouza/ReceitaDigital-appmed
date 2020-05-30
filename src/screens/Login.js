@@ -4,13 +4,16 @@ import {
     Text,
     View,
     ImageBackground,
+    Image,
     TextInput,
     TouchableOpacity,
     Alert
 } from 'react-native'
 
 import bg from '../../assets/imgs/med-bg.jpg'
+import logo from '../../assets/imgs/logo-dark.png'
 import commonStyles from '../commonStyles'
+import { StackNavigator } from 'react-navigation';
 
 const pressButton = () => {
     Alert.alert('Realizando login...');
@@ -20,23 +23,72 @@ const lostPassword = () => {
 }
 
 export default class Login extends Component {
+    login = () =>{
+        const {userCpf, userPassword} = this.state;
+        fetch('http://198.50.130.238/login/login.php',{
+            method:'post',
+            header:{
+                'Accept': 'application/json',
+                'Content-type': 'application/json'
+            },
+            body:JSON.stringify({
+                // Passar os inputs para o server
+                cpf: userCpf,
+                password: userPassword
+            })
+    
+        })
+        .then((response) => response.json())
+        .then((responseJson)=>{
+            if(responseJson == "Login feito com sucesso!"){
+                // redirecionar para a criação de receitas
+                alert("Login realizado com sucesso!")
+                this.props.navigation.navigate('Home')
+            }else{
+                alert("Login invalido! CPF ou SENHA incorretos, tente novamente.")
+            }
+        })
+        .catch((error)=>{
+            console.error(error);
+        });
+    }
+
+    constructor(props) {
+ 
+        super(props)
+     
+        this.state = {
+     
+          UserCpf: '',
+          UserPassword: ''
+     
+        }
+     
+      }
     render() {
         return (
             <View style={styles.container}>
                 <ImageBackground source={bg}
                     style={styles.bgImg}>
                     <View style={styles.background}>
+                    <Image source={logo} style={styles.logo}>
+
+                    </Image>
                         <TextInput
-                            placeholder="Usuário"
+                            onChangeText={userCpf => this.setState({userCpf})}
+                            placeholder="CPF"
                             style={styles.loginUS}
                             autoCorrect={false}
                         />
                         <TextInput
+                            onChangeText={userPassword => this.setState({userPassword})}
+                            secureTextEntry={true}
                             placeholder="Senha"
                             style={styles.loginUS}
                             autoCorrect={false}
                         />
-                        <TouchableOpacity style={styles.pressButton}>
+                        <TouchableOpacity style={styles.pressButton} onPress={this.login}>
+                            
                             <Text style={styles.textBtn}>Acessar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.lostPassword}>
@@ -57,9 +109,13 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: 'rgba(0,0,0,0.1)',
     },  
     bgImg: {
-        flex: 1
+        flex: 1,
+    },
+    logo: {
+        width: '100%'
     },
     loginUS: {
         backgroundColor: commonStyles.colors.secondary,

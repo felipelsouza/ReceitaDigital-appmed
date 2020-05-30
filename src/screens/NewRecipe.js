@@ -165,6 +165,12 @@ export default class NewRecipe extends Component {
                         onCancel={() => this.setState({ showConfirmRecipe: false })}
                     />
                     <View style={styles.header}>
+                        <TouchableOpacity style={styles.addIcon} activeOpacity={0.8}
+                            onPress={() => this.props.navigation.navigate('Home')}>
+                            <Icon name="angle-left" size={15}
+                                    color={commonStyles.colors.secondary}
+                                />
+                        </TouchableOpacity>
                         <Text style={styles.title}>{hospital}</Text>
                         <Text style={styles.title}>{today}</Text>
                     </View>
@@ -252,12 +258,7 @@ export default class NewRecipe extends Component {
                     </View>
 
                     <View style={styles.footer}>
-                        <TouchableOpacity activeOpacity={0.8}
-                            onPress={() => this.props.navigation.navigate('Home')}>
-                            <View style={styles.buttons}>
-                                <Text style={styles.regularText}>Voltar</Text>
-                            </View>
-                        </TouchableOpacity>
+                        
                         <TouchableOpacity activeOpacity={0.8}
                             onPress={this.handleConfirmPress}
                             disabled={!validForm}
