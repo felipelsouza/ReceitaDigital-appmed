@@ -36,7 +36,7 @@ export default class AddMedicament extends Component {
             return prods.PRODUTO
         })
         console.log(items)
-        this.setState({items: items})
+        this.setState({ items: items })
     }
 
     save = () => {
@@ -81,6 +81,12 @@ export default class AddMedicament extends Component {
 
     render() {
         console.log(this.state.items)
+
+        const validations = []
+        validations.push(this.state.name && this.state.name.trim().length > 0)
+        validations.push(this.state.dosage && this.state.dosage.trim().length > 0)
+
+        const validForm = validations.reduce((t, a) => t && a)
         return (
             <Modal transparent={true} visible={this.props.isVisible}
                 onRequestClose={this.props.onCancel}
@@ -118,11 +124,16 @@ export default class AddMedicament extends Component {
                                 activeOpacity={0.8}>
                                 <Text style={styles.regularText}>Cancelar</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.button}
+                            <TouchableOpacity
                                 activeOpacity={0.8}
-                                onPress={this.save}>
-                                <Text style={styles.regularText}>Adicionar</Text>
+                                onPress={this.save}
+                                disabled={!validForm}
+                            >
+                                <View style={[styles.button, validForm ? {} : { backgroundColor: '#AAA' }]}>
+                                    <Text style={styles.regularText}>Adicionar</Text>
+                                </View>
                             </TouchableOpacity>
+
                         </View>
                     </View>
                 </View>

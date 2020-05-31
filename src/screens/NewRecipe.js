@@ -150,7 +150,7 @@ export default class NewRecipe extends Component {
             const validations = []
             validations.push(this.state.name && this.state.name.trim().length > 0)
             validations.push(this.state.cpf && this.state.cpf.length === 14)
-            validations.push(this.state.cartaoSus && this.state.cartaoSus > 0)
+            validations.push(this.state.cartaoSus && this.state.cartaoSus.length === 15)
             validations.push(this.state.medicaments && this.state.medicaments != '')
 
             const validForm = validations.reduce((t, a) => t && a)
