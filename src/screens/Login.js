@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { login } from '../store/actions/user'
 import {
     StyleSheet,
     Text,
@@ -13,86 +15,76 @@ import {
 import bg from '../../assets/imgs/med-bg.jpg'
 import logo from '../../assets/imgs/logo-dark.png'
 import commonStyles from '../commonStyles'
-import { StackNavigator } from 'react-navigation';
 
-const pressButton = () => {
-    Alert.alert('Realizando login...');
-}
-const lostPassword = () => {
-    Alert.alert('Informe seu e-mail para recuperar senha...');
-}
-
-export default class Login extends Component {
-    login = () =>{
-        const {userCpf, userPassword} = this.state;
-        fetch('http://198.50.130.238/login/login.php',{
-            method:'post',
-            header:{
+class Login extends Component {
+    login = () => {
+        const { userCpf, userPassword } = this.state;
+        fetch('http://198.50.130.238/login/login.php', {
+            method: 'post',
+            header: {
                 'Accept': 'application/json',
                 'Content-type': 'application/json'
             },
-            body:JSON.stringify({
+            body: JSON.stringify({
                 // Passar os inputs para o server
                 cpf: userCpf,
                 password: userPassword
             })
-    
+
         })
-        .then((response) => response.json())
-        .then((responseJson)=>{
-            if(responseJson == "Login feito com sucesso!"){
-                // redirecionar para a criação de receitas
-                alert("Login realizado com sucesso!")
-                this.props.navigation.navigate('Home')
-            }else{
-                alert("Login invalido! CPF ou SENHA incorretos, tente novamente.")
-            }
-        })
-        .catch((error)=>{
-            console.error(error);
-        });
+            .then((response) => response.json())
+            .then((responseJson) => {
+                if (responseJson == "Login feito com sucesso!") {
+                    // redirecionar para a criação de receitas
+                    Alert.alert("Login realizado com sucesso!")
+                    this.props.onLogin({ ...this.state })
+                    this.props.navigation.navigate('Home')
+                } else {
+                    Alert.alert("Login invalido! CPF ou SENHA incorretos, tente novamente.")
+                }
+            })
+            .catch((error) => {
+                console.error(error);
+            });
     }
 
     constructor(props) {
- 
+
         super(props)
-     
+
         this.state = {
-     
-          UserCpf: '',
-          UserPassword: ''
-     
+
+            UserCpf: '',
+            UserPassword: ''
+
         }
-     
-      }
+
+    }
     render() {
         return (
             <View style={styles.container}>
                 <ImageBackground source={bg}
                     style={styles.bgImg}>
                     <View style={styles.background}>
-                    <Image source={logo} style={styles.logo}>
+                        <Image source={logo} style={styles.logo}>
 
-                    </Image>
+                        </Image>
                         <TextInput
-                            onChangeText={userCpf => this.setState({userCpf})}
+                            onChangeText={userCpf => this.setState({ userCpf })}
                             placeholder="CPF"
                             style={styles.loginUS}
                             autoCorrect={false}
                         />
                         <TextInput
-                            onChangeText={userPassword => this.setState({userPassword})}
+                            onChangeText={userPassword => this.setState({ userPassword })}
                             secureTextEntry={true}
                             placeholder="Senha"
                             style={styles.loginUS}
                             autoCorrect={false}
                         />
                         <TouchableOpacity style={styles.pressButton} onPress={this.login}>
-                            
+
                             <Text style={styles.textBtn}>Acessar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.lostPassword}>
-                            <Text style={styles.lostBtn}>Recuperar Senha</Text>
                         </TouchableOpacity>
                     </View>
                 </ImageBackground>
@@ -110,7 +102,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: 'rgba(0,0,0,0.1)',
-    },  
+    },
     bgImg: {
         flex: 1,
     },
@@ -138,11 +130,12 @@ const styles = StyleSheet.create({
         color: commonStyles.colors.secondary,
         fontSize: 18
     },
-    lostPassword: {
-        marginTop: 10,
+})
 
-    },
-    lostBtn: {
-        color: commonStyles.colors.secondary,
+const mapDispatchToProps = dispatch => {
+    return {
+        onLogin: user => dispatch(login(user))
     }
-});
+}
+
+export default connect(null, mapDispatchToProps)(Login)

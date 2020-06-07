@@ -35,7 +35,7 @@ export default class AddMedicament extends Component {
         var items = arr.map(function (prods) {
             return prods.PRODUTO
         })
-        console.log(items)
+        //console.log(items)
         this.setState({ items: items })
     }
 
@@ -80,7 +80,7 @@ export default class AddMedicament extends Component {
     }
 
     render() {
-        console.log(this.state.items)
+        //console.log(this.state.items)
 
         const validations = []
         validations.push(this.state.name && this.state.name.trim().length > 0)

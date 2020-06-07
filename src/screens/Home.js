@@ -7,6 +7,8 @@ import {
     TouchableOpacity,
     Image
 } from 'react-native'
+import { connect } from 'react-redux'
+import { logout } from '../store/actions/user'
 
 import commonStyles from '../commonStyles'
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -15,8 +17,14 @@ import bg from '../../assets/imgs/med-bg.jpg'
 import moment from 'moment'
 import 'moment/locale/pt-br'
 
-export default class Home extends Component {
+class Home extends Component {
+    logout = () => {
+        this.props.onLogout()
+        this.props.navigation.navigate('Login')
+    }
+    
     render() {
+        console.log(this.props.userCpf)
         const today = moment().locale('pt-br').format('dddd, D [de] MMMM')
         return (
             <View style={styles.container}>
@@ -51,7 +59,7 @@ export default class Home extends Component {
                                 />
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.addIcon} activeOpacity={0.8}
-                            onPress={() => this.props.navigation.navigate('Login')}>
+                            onPress={this.logout}>
                             <Icon name="sign-out" size={20}
                                     color={commonStyles.colors.secondary}
                                 />
@@ -132,3 +140,17 @@ const styles = StyleSheet.create({
         fontSize: 20
     }
 })
+
+const mapStateToProps = ({ user }) => {
+    return {
+        userCpf: user.userCpf
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onLogout: () => dispatch(logout())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)

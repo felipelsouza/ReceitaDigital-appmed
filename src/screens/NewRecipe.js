@@ -9,6 +9,7 @@ import {
     FlatList,
     Platform,
 } from 'react-native'
+import { connect } from 'react-redux'
 
 import Icon from 'react-native-vector-icons/FontAwesome'
 import commonStyles from '../commonStyles'
@@ -20,6 +21,7 @@ import { TextInputMask } from 'react-native-masked-text'
 import AddMedicament from './AddMedicament'
 import Medicament from '../components/Medicament'
 import ConfirmRecipe from './ConfirmRecipe'
+import Login from './Login'
 
 import api from '../services/api'
 
@@ -35,15 +37,14 @@ const initialState = {
     visibleMedicaments: [],
     date: new Date(),
     showDatePicker: false,
-    //recipe: [],
     cartaoSus: '',
     cpf: '',
     name: '',
-    cpfMed: '',
+    //cpfMed: '',
     loading: false
 }
 
-export default class NewRecipe extends Component {
+class NewRecipe extends Component {
     state = {
         ...initialState
     }
@@ -108,17 +109,16 @@ export default class NewRecipe extends Component {
     handleConfirmPress = async () => {
         try {
             this.setState({ loading: true })
-
             //this.setState({ showConfirmRecipe: true })
 
             const cpfParsed = this.state.cpf.replace(/[^0-9]/g, "")
-            //const cpfMedParsed = this.state.cpfMed.replace(/[^0-9]/g, "")
-
+            const cpfMed = this.props.userCpf
+            
             const arr = this.state.medicaments
             const names = arr.map(names => names.name)
             const dosages = arr.map(dosages => dosages.dosage)
             const observations = arr.map(observations => observations.obs)
-
+            
             const namesJSON = JSON.stringify(names)
             const dosagesJSON = JSON.stringify(dosages)
             const obsJSON = JSON.stringify(observations)
@@ -126,7 +126,7 @@ export default class NewRecipe extends Component {
             const response = await api.post('/receitas', {
                 NOME_PACIENTE_RECEITA: this.state.name,
                 CPF_PACIENTE_RECEITA: cpfParsed,
-                //CPF_MEDICO: cpfMedParsed,
+                CPF_MEDICO: cpfMed,
                 CARTAO_SUS_PACIENTE: this.state.cartaoSus,
                 MEDICAMENTO_RECEITA: namesJSON,
                 DOSAGEM: dosagesJSON,
@@ -168,8 +168,8 @@ export default class NewRecipe extends Component {
                         <TouchableOpacity style={styles.addIcon} activeOpacity={0.8}
                             onPress={() => this.props.navigation.navigate('Home')}>
                             <Icon name="angle-left" size={15}
-                                    color={commonStyles.colors.secondary}
-                                />
+                                color={commonStyles.colors.secondary}
+                            />
                         </TouchableOpacity>
                         <Text style={styles.title}>{hospital}</Text>
                         <Text style={styles.title}>{today}</Text>
@@ -258,14 +258,14 @@ export default class NewRecipe extends Component {
                     </View>
 
                     <View style={styles.footer}>
-                        
+
                         <TouchableOpacity activeOpacity={0.8}
                             onPress={this.handleConfirmPress}
                             disabled={!validForm}
                         //onPress={() => this.setState({ showConfirmRecipe: true })}
                         >
                             <View style={[styles.buttons, validForm ? {} : { backgroundColor: '#AAA' }]}>
-                                <Text style={{color: commonStyles.colors.secondary, fontSize: 18, fontWeight: 'bold'}}>Emitir</Text>
+                                <Text style={{ color: commonStyles.colors.secondary, fontSize: 18, fontWeight: 'bold' }}>Emitir</Text>
                             </View>
                         </TouchableOpacity>
                     </View>
@@ -382,3 +382,11 @@ const styles = StyleSheet.create({
         padding: 8
     }
 })
+
+const mapStateToProps = ({ user }) => {
+    return {
+        userCpf: user.userCpf
+    }
+}
+
+export default connect(mapStateToProps, null)(NewRecipe)
