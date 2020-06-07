@@ -36,11 +36,11 @@ class Login extends Component {
             .then((responseJson) => {
                 if (responseJson == "Login feito com sucesso!") {
                     // redirecionar para a criação de receitas
-                    Alert.alert("Login realizado com sucesso!")
+                    Alert.alert('Login realizado com sucesso!')
                     this.props.onLogin({ ...this.state })
                     this.props.navigation.navigate('Home')
                 } else {
-                    Alert.alert("Login invalido! CPF ou SENHA incorretos, tente novamente.")
+                    Alert.alert('Login invalido!', 'CPF ou SENHA incorretos, tente novamente.')
                 }
             })
             .catch((error) => {
