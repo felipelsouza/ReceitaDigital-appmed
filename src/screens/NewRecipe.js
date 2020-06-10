@@ -111,7 +111,6 @@ class NewRecipe extends Component {
             this.setState({ loading: true })
             //this.setState({ showConfirmRecipe: true })
 
-            const cpfParsed = this.state.cpf.replace(/[^0-9]/g, "")
             const cpfMed = this.props.userCpf
             
             const arr = this.state.medicaments
@@ -125,7 +124,7 @@ class NewRecipe extends Component {
 
             const response = await api.post('/receitas', {
                 NOME_PACIENTE_RECEITA: this.state.name,
-                CPF_PACIENTE_RECEITA: cpfParsed,
+                CPF_PACIENTE_RECEITA: this.state.cpf,
                 CPF_MEDICO: cpfMed,
                 CARTAO_SUS_PACIENTE: this.state.cartaoSus,
                 MEDICAMENTO_RECEITA: namesJSON,
@@ -149,7 +148,7 @@ class NewRecipe extends Component {
 
             const validations = []
             validations.push(this.state.name && this.state.name.trim().length > 0)
-            validations.push(this.state.cpf && this.state.cpf.length === 14)
+            validations.push(this.state.cpf && this.state.cpf.length === 11)
             validations.push(this.state.cartaoSus && this.state.cartaoSus.length === 15)
             validations.push(this.state.medicaments && this.state.medicaments != '')
 
@@ -192,7 +191,7 @@ class NewRecipe extends Component {
                                 <TextInputMask
                                     type={'cpf'}
                                     value={this.state.cpf}
-                                    onChangeText={text => { this.setState({ cpf: text }) }}
+                                    onChangeText={text => { this.setState({ cpf: text.replace(/[^0-9]/g, "") }) }}
                                     style={{
                                         borderWidth: 1,
                                         borderColor: commonStyles.colors.primary,

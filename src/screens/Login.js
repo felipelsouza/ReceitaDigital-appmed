@@ -12,6 +12,8 @@ import {
     Alert
 } from 'react-native'
 
+import { TextInputMask } from 'react-native-masked-text'
+
 import bg from '../../assets/imgs/med-bg.jpg'
 import logo from '../../assets/imgs/logo-dark.png'
 import commonStyles from '../commonStyles'
@@ -61,6 +63,8 @@ class Login extends Component {
 
     }
     render() {
+        console.log(this.state.userCpf)
+
         return (
             <View style={styles.container}>
                 <ImageBackground source={bg}
@@ -69,19 +73,21 @@ class Login extends Component {
                         <Image source={logo} style={styles.logo}>
 
                         </Image>
-                        <TextInput
-                            onChangeText={userCpf => this.setState({ userCpf })}
-                            placeholder="CPF"
-                            style={styles.loginUS}
-                            autoCorrect={false}
-                        />
-                        <TextInput
-                            onChangeText={userPassword => this.setState({ userPassword })}
-                            secureTextEntry={true}
-                            placeholder="Senha"
-                            style={styles.loginUS}
-                            autoCorrect={false}
-                        />
+                            <TextInputMask
+                                type={'cpf'}
+                                value={this.state.userCpf}
+                                onChangeText={text => { this.setState({ userCpf: text.replace(/[^0-9]/g, "") }) }}
+                                style={styles.loginUS}
+                                autoCorrect={false}
+                                placeholder="Digite seu CPF"
+                            />
+                            <TextInput
+                                onChangeText={userPassword => this.setState({ userPassword })}
+                                secureTextEntry={true}
+                                placeholder="Senha"
+                                style={styles.loginUS}
+                                autoCorrect={false}
+                            />
                         <TouchableOpacity style={styles.pressButton} onPress={this.login}>
 
                             <Text style={styles.textBtn}>Acessar</Text>

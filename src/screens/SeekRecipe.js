@@ -7,7 +7,9 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import moment from 'moment'
 
-export default class SeekRecipe extends Component { 
+import { connect } from 'react-redux'
+
+class SeekRecipe extends Component { 
       getDatePicker = () => {
         let datePicker = <DateTimePicker value={this.state.date}
             onChange={(_, date) => this.setState({ date, showDatePicker: false })}
@@ -33,7 +35,7 @@ export default class SeekRecipe extends Component {
         return datePicker
     }
       async componentDidMount() {
-        await api.get('/receitas')
+        await api.get(`/receitas/${this.props.userCpf}`)
             .then(res => this.setState({ items: res.data }))
         const arr = this.state.items
         var items = arr.map(function (prods) {
@@ -149,3 +151,11 @@ const styles = StyleSheet.create({
         marginBottom: 50
     }
   });
+
+  const mapStateToProps = ({ user }) => {
+    return {
+        userCpf: user.userCpf
+    }
+}
+
+export default connect(mapStateToProps, null)(SeekRecipe)
