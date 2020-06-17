@@ -58,8 +58,8 @@ class SeekRecipe extends Component {
       
       renderItem = ({ item }) => (
         <View style={styles.listItem}>
-          <Text>{item.NOME_PACIENTE_RECEITA}</Text>
-          <Text>{item.MEDICAMENTO_RECEITA}</Text>
+          <Text key={Math.random()}>{item.NOME_PACIENTE_RECEITA}</Text>
+          <Text key={Math.random()}>{item.MEDICAMENTO_RECEITA}</Text>
         </View>
       );
         
